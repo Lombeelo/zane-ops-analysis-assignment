@@ -96,7 +96,7 @@ jobs:
         run: |
           mkdir -p security-reports
           # Start a simple local server if you have static files; replace with your app start if needed
-          docker run --rm --network host owasp/zap2docker-stable zap-baseline.py -t http://zane.example.com -r /tmp/zap_report.html -J /tmp/zap_report.json -z "-config api.disablekey=true"
+          docker run --rm --network host ghcr.io/owasp/zap2docker-stable zap-baseline.py -t http://zane.example.com -r /tmp/zap_report.html -J /tmp/zap_report.json -z "-config api.disablekey=true"
           cp /tmp/zap_report.json security-reports/zap-report.json || true
           
       - name: Upload reports as job artifact
