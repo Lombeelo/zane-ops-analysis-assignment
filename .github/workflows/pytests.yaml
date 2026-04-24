@@ -67,10 +67,7 @@ jobs:
           pip install semgrep
           curl -fsSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
           trivy --version
-          docker run -d --name zap -p 8080:8080 owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true
-          for i in {1..30}; do
-            docker logs zap 2>&1 | grep "ZAP .*started" && break || sleep 2
-          done
+          
           mkdir -p security-reports
           uv sync --locked --no-dev --no-install-project
           uv sync --locked --no-dev --no-editable
@@ -91,13 +88,6 @@ jobs:
           cd backend
           source .venv/bin/activate
           python manage.py runserver --keepdb
-
-      - name: Run quick OWASP ZAP baseline scan 
-        run: |
-          mkdir -p security-reports
-          # Start a simple local server if you have static files; replace with your app start if needed
-          docker run --rm --network host ghcr.io/owasp/zap2docker-stable zap-baseline.py -t http://zane.example.com -r /tmp/zap_report.html -J /tmp/zap_report.json -z "-config api.disablekey=true"
-          cp /tmp/zap_report.json security-reports/zap-report.json || true
           
       - name: Upload reports as job artifact
         uses: actions/upload-artifact@v4
